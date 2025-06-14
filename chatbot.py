@@ -139,7 +139,6 @@ async def get_id(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         keyboard = []
         for career_doc in careers_ref:
             career_data = career_doc.to_dict()
-            # MODIFICACIÓN: Usar el campo 'nombre' para el texto y el callback.
             career_name = career_data.get('nombre', career_doc.id)
             keyboard.append([InlineKeyboardButton(career_name, callback_data=career_name)])
         
@@ -168,7 +167,6 @@ async def get_subject(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
     return await ask_question(update, context)
 
 async def ask_question(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    # ... (Sin cambios en esta función) ...
     part_key = context.user_data.get("current_part")
     q_idx = context.user_data.get("current_question_index", 0)
 
@@ -196,7 +194,7 @@ async def ask_question(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
     return state_map[part_key] + q_idx
 
 async def handle_answer(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    # ... (Sin cambios en esta función) ...
+
     query = update.callback_query
     await query.answer()
     part_key = context.user_data["current_part"]
@@ -216,7 +214,6 @@ async def handle_answer(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
 
 
 async def end_test(update: Update, context: ContextTypes.DEFAULT_TYPE, from_callback: bool=False) -> int:
-    # ... (Sin cambios en esta función) ...
     user_data = context.user_data
     correct_answers = sum(1 for details in user_data.get("answers", {}).values() if details.get("is_correct"))
     total_questions = sum(len(q_list) for q_list in QUESTIONS.values())
@@ -252,7 +249,6 @@ async def prof_get_id(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
     return PROF_LOGIN_PASS
 
 async def prof_get_password_and_auth(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    # ... (Sin cambios en esta función) ...
     prof_id = context.user_data.get('prof_id')
     password = update.message.text
 
@@ -281,7 +277,6 @@ async def prof_get_password_and_auth(update: Update, context: ContextTypes.DEFAU
 
 
 async def prof_menu_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    # ... (Sin cambios en esta función) ...
     query = update.callback_query
     await query.answer()
     
@@ -293,7 +288,6 @@ async def prof_menu_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         return await prof_download_results(update, context)
 
 async def prof_upload_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    # ... (Sin cambios en esta función) ...
     document = update.message.document
     if not document.file_name.endswith('.xlsx'):
         await update.message.reply_text("Formato incorrecto. Sube un .xlsx")
@@ -331,7 +325,6 @@ async def prof_upload_handler(update: Update, context: ContextTypes.DEFAULT_TYPE
 
 
 async def prof_download_results(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    # ... (Sin cambios en esta función) ...
     try:
         exams_ref = db.collection('exams').stream()
         results_data = [doc.to_dict() for doc in exams_ref]
@@ -391,7 +384,6 @@ def main() -> None:
             PROF_UPLOAD_LIST: [MessageHandler(filters.Document.ALL, prof_upload_handler)],
         },
         fallbacks=[CommandHandler("cancel", cancel)],
-        # Permitir que la conversación persista entre diferentes chats o grupos (útil para el bot)
         per_user=True,
     )
 
